@@ -10,6 +10,7 @@ private:
     bool end_of_word;
 
 public:
+TrieData *root = NULL;
     TrieData()
     {
         this->end_of_word = false;
@@ -17,6 +18,7 @@ public:
         {
             this->children_nodes[i] = NULL;
         }
+        
     }
     void insert_query(TrieData *root, string query)
     {
@@ -44,22 +46,81 @@ public:
         }
         temp->end_of_word = true;
     }
-    bool search_query(TrieData *root, string query){
-        if(query.length() == 0 || !root){
+    bool search_query(TrieData *root, string query)
+    {
+        if (query.length() == 0 || !root)
+        {
             return false;
         }
         TrieData *temp = root;
         int index;
-        for(int i=0; i<query.length(); i++){
-            index = query[i]-'a';
-            if(!temp->children_nodes[index]){
+        for (int i = 0; i < query.length(); i++)
+        {
+            index = query[i] - 'a';
+            if (!temp->children_nodes[index])
+            {
                 return false;
             }
-            else{
+            else
+            {
                 temp = temp->children_nodes[index];
             }
         }
         return temp->end_of_word;
+    }
+    int auto_complete(TrieData *root, string query)
+    {
+        TrieData *temp = root;
+        int index;
+        for (int i = 0; i < query.length(); i++)
+        {
+            index = query[i] - 'a';
+            if (!temp->children_nodes[index])
+            {
+                return -1;
+            }
+            else
+            {
+                temp = temp->children_nodes[index];
+            }
+        }
+        return print(temp, query);
+    }
+    int print(TrieData *node, string query)
+    {
+        if (node->end_of_word)
+        {
+            cout << query << endl;
+            if (no_children(node))
+            {
+                return 1;
+            }
+        }
+        for(int i=0; i<MAX_SIZE; i++){
+            if(node->children_nodes[i]){
+                query.push_back(i+'a');
+                print(node->children_nodes[i], query);
+                query.pop_back();
+            }
+        }
+    }
+    bool no_children(TrieData *node)
+    {
+        for (int i = 0; i < MAX_SIZE; i++)
+        {
+            if (node->children_nodes[i])
+                return false;
+        }
+        return true;
+    }
+    void insert(string query){
+        insert_query(root, query);
+    }
+    bool search(string query){
+        return search_query(root, query);
+    }
+    int comlete(string query){
+        return auto_complete(root, query);
     }
 };
 
