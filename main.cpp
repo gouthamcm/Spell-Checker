@@ -132,7 +132,7 @@ public:
     {
         return search_query(root, query);
     }
-    int comlete(string query)
+    int complete(string query)
     {
         return auto_complete(root, query);
     }
