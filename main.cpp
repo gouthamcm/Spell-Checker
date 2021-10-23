@@ -10,37 +10,38 @@ private:
     bool end_of_word;
 
 public:
-TrieData *root = NULL;
-    TrieData()
+    TrieData *root = NULL;
+    TrieData *make_node()
     {
-        this->end_of_word = false;
+        TrieData *new_node = (TrieData *)malloc(sizeof(TrieData));
+
         for (int i = 0; i < MAX_SIZE; i++)
         {
-            this->children_nodes[i] = NULL;
+            new_node->children_nodes[i] = NULL;
         }
-        
+        new_node->end_of_word = false;
+
+        return new_node;
     }
+
     void insert_query(TrieData *root, string query)
     {
-        TrieData *temp = root;
+        TrieData *temp;
         //temporary variable to store the root node
         int index;
-        if (temp == NULL && query.length() > 0)
-        {
-            index = query[0] - 'a';
-            temp->children_nodes[index] = new TrieData();
-        }
-        else if (query.length() == 0)
+
+        if (query.length() == 0)
         {
             cout << "No string to be inserted";
             return;
         }
+        temp = root;
         for (int i = 0; i < query.length(); i++)
         {
             index = query[i] - 'a';
             if (!temp->children_nodes[index])
             {
-                temp->children_nodes[index] = new TrieData();
+                temp->children_nodes[index] = make_node();
             }
             temp = temp->children_nodes[index];
         }
@@ -48,8 +49,13 @@ TrieData *root = NULL;
     }
     bool search_query(TrieData *root, string query)
     {
-        if (query.length() == 0 || !root)
+        if (query.length() == 0)
         {
+            return false;
+        }
+        if (!root)
+        {
+            cout << "hi\n";
             return false;
         }
         TrieData *temp = root;
@@ -96,9 +102,11 @@ TrieData *root = NULL;
                 return 1;
             }
         }
-        for(int i=0; i<MAX_SIZE; i++){
-            if(node->children_nodes[i]){
-                query.push_back(i+'a');
+        for (int i = 0; i < MAX_SIZE; i++)
+        {
+            if (node->children_nodes[i])
+            {
+                query.push_back(i + 'a');
                 print(node->children_nodes[i], query);
                 query.pop_back();
             }
@@ -113,13 +121,19 @@ TrieData *root = NULL;
         }
         return true;
     }
-    void insert(string query){
+    void insert(string query)
+    {
+        if(!root){
+            root=make_node();
+        }
         insert_query(root, query);
     }
-    bool search(string query){
+    bool search(string query)
+    {
         return search_query(root, query);
     }
-    int comlete(string query){
+    int comlete(string query)
+    {
         return auto_complete(root, query);
     }
 };
