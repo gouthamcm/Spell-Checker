@@ -1,4 +1,5 @@
 #include <iostream>
+#include <vector>
 #define MAX_SIZE 26
 
 using namespace std;
@@ -120,6 +121,38 @@ public:
                 return false;
         }
         return true;
+    }
+    bool distance(string word, string query){
+        int N = word.length();
+        int M = query.length();
+        vector<vector<int>> mat(N, vector<int>(M+1));
+        for(int i=0; i<N; i++){
+            mat[i][0] = i;
+        }
+        for(int i=0; i<M; i++){
+            mat[0][i]=i;
+        }
+        for(int i=1; i<=N; i++){
+            for(int j=1; j<=M; j++){
+                if(word[i-1] == query[j-1]){
+                    mat[i][j]=mat[i-1][j-1];
+                }
+                else{
+                    mat[i][j] = 1 + min(mat[i-1][j], min(mat[i][j-1], mat[i-1][j-1]));
+                }
+            }
+        }
+        return (mat[N][M]>3);
+    }
+    void autocorrect(TrieData *root){
+        if(!root) return;
+        TrieData *temp=root;
+        for(int i=0; i<MAX_SIZE; i++){
+            
+        }
+    }
+    int min(int a, int b){
+        return a<b?a:b;
     }
     void insert(string query)
     {
