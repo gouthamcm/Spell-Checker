@@ -1,5 +1,6 @@
 #include <iostream>
 #include <vector>
+#include <string>
 #define MAX_SIZE 26
 
 using namespace std;
@@ -122,42 +123,66 @@ public:
         }
         return true;
     }
-    bool distance(string word, string query){
+    bool distance(string word, string query)
+    {
         int N = word.length();
         int M = query.length();
-        vector<vector<int>> mat(N, vector<int>(M+1));
-        for(int i=0; i<N; i++){
+        vector<vector<int>> mat(N + 1, vector<int>(M + 1));
+        for (int i = 0; i <= N; i++)
+        {
             mat[i][0] = i;
         }
-        for(int i=0; i<M; i++){
-            mat[0][i]=i;
+        for (int i = 0; i <= M; i++)
+        {
+            mat[0][i] = i;
         }
-        for(int i=1; i<=N; i++){
-            for(int j=1; j<=M; j++){
-                if(word[i-1] == query[j-1]){
-                    mat[i][j]=mat[i-1][j-1];
+        for (int i = 1; i <= N; i++)
+        {
+            for (int j = 1; j <= M; j++)
+            {
+                if (word[i - 1] == query[j - 1])
+                {
+                    mat[i][j] = mat[i - 1][j - 1];
                 }
-                else{
-                    mat[i][j] = 1 + min(mat[i-1][j], min(mat[i][j-1], mat[i-1][j-1]));
+                else
+                {
+                    mat[i][j] = 1 + min(mat[i - 1][j], min(mat[i][j - 1], mat[i - 1][j - 1]));
                 }
             }
         }
-        return (mat[N][M]>3);
+        return (mat[N][M] > 3);
     }
-    void autocorrect(TrieData *root){
-        if(!root) return;
-        TrieData *temp=root;
-        for(int i=0; i<MAX_SIZE; i++){
-            
+    void find_all_words(TrieData *root, string res, string query)
+    {
+        if (!root)
+            return;
+        TrieData *temp = root;
+        if (temp->end_of_word)
+        {
+            if (!distance(res, query))
+            {
+                cout << res << "\n";
+            }
+        }
+        for (int i = 0; i < MAX_SIZE; i++)
+        {
+            if (temp->children_nodes[i])
+            {
+                res.push_back(i + 97);
+                find_all_words(temp->children_nodes[i], res, query);
+                res.pop_back();
+            }
         }
     }
-    int min(int a, int b){
-        return a<b?a:b;
+    int min(int a, int b)
+    {
+        return a < b ? a : b;
     }
     void insert(string query)
     {
-        if(!root){
-            root=make_node();
+        if (!root)
+        {
+            root = make_node();
         }
         insert_query(root, query);
     }
@@ -169,10 +194,30 @@ public:
     {
         return auto_complete(root, query);
     }
+    void autocorrect(string query)
+    {
+        string res = "";
+        find_all_words(root, res, query);
+    }
 };
 
 int main()
 {
+    TrieData ob;
+    ob.insert("hello");
+    ob.insert("bye");
+    ob.insert("dictionary");
+    ob.insert("dog");
+    ob.insert("cat");
+    ob.insert("bat");
+    ob.insert("google");
+    ob.insert("facebook");
+    ob.insert("develop");
+    ob.insert("stand");
+    ob.insert("jikod");
+    ob.insert("dmsjkc");
+    ob.insert("kaoinfa");
 
+    ob.autocorrect("h");
     return 0;
 }
