@@ -76,7 +76,7 @@ public:
         }
         return temp->end_of_word;
     }
-    int auto_complete(TrieData *root, string query)
+    void auto_complete(TrieData *root, string query)
     {
         TrieData *temp = root;
         int index;
@@ -85,7 +85,7 @@ public:
             index = query[i] - 'a';
             if (!temp->children_nodes[index])
             {
-                return -1;
+                return ;
             }
             else
             {
@@ -94,14 +94,14 @@ public:
         }
         return print(temp, query);
     }
-    int print(TrieData *node, string query)
+    void print(TrieData *node, string query)
     {
         if (node->end_of_word)
         {
             cout << query << endl;
             if (no_children(node))
             {
-                return 1;
+                return ;
             }
         }
         for (int i = 0; i < MAX_SIZE; i++)
@@ -190,9 +190,9 @@ public:
     {
         return search_query(root, query);
     }
-    int complete(string query)
+    void complete(string query)
     {
-        return auto_complete(root, query);
+        auto_complete(root, query);
     }
     void autocorrect(string query)
     {
@@ -203,21 +203,46 @@ public:
 
 int main()
 {
-    TrieData ob;
-    ob.insert("hello");
-    ob.insert("bye");
-    ob.insert("dictionary");
-    ob.insert("dog");
-    ob.insert("cat");
-    ob.insert("bat");
-    ob.insert("google");
-    ob.insert("facebook");
-    ob.insert("develop");
-    ob.insert("stand");
-    ob.insert("jikod");
-    ob.insert("dmsjkc");
-    ob.insert("kaoinfa");
+    // TrieData ob;
+    // ob.insert("hello");
+    // ob.insert("bye");
+    // ob.insert("dictionary");
+    // ob.insert("dog");
+    // ob.insert("cat");
+    // ob.insert("bat");
+    // ob.insert("google");
+    // ob.insert("facebook");
+    // ob.insert("develop");
+    // ob.insert("stand");
+    // ob.insert("jikod");
+    // ob.insert("dmsjkc");
+    // ob.insert("kaoinfa");
 
-    ob.autocorrect("h");
+    // ob.autocorrect("h");
+    int n; //no of words in the dict
+    TrieData ob;
+    string word;
+    cin>>n;
+    while(n--){
+        cin>>word;
+        ob.insert(word);
+    }
+    int ai;
+    string ti;
+    cin>>ai;
+    cin>>ti;
+    if(ai==1){
+        int res = ob.search(ti);
+        cout<<res<<endl;
+    }
+    else if(ai==2){
+        ob.complete(ti);
+    }
+    else if(ai==3){
+        ob.autocorrect(ti);
+    }
+    else{
+        cout<<"Invaild query\n";
+    }
     return 0;
 }
